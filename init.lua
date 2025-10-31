@@ -74,7 +74,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 
 -- color
 local term = os.getenv("TERM")
-if term == "alacritty" then
+if term == "alacritty" or term == "xterm-ghostty" then
   vim.opt.termguicolors = true
   vim.cmd("colorscheme tokyonight")
 elseif not term or string.sub(term, 1, 5) == "xterm" then
