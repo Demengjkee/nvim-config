@@ -10,21 +10,21 @@ return {
             "__pycache__/", "%.venv/", "node_modules/", "vendor/",
             "%.terraform/"
           },
+          vimgrep_arguments = {
+            'rg',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            '--unrestricted',
+          },
         },
         pickers = {
           find_files = {
             hidden = true,
           },
-        },
-        vimgrep_arguments = {
-          'rg',
-          '--color=never',
-          '--no-heading',
-          '--with-filename',
-          '--line-number',
-          '--column',
-          '--smart-case',
-          '--unrestricted',
         },
       })
     end,

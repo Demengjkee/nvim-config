@@ -1,12 +1,16 @@
---telescope.lua
+--lspconfig.lua
 return {
   {
     "neovim/nvim-lspconfig",
     config = function()
+      require("mason").setup()
+      require("mason-lspconfig").setup()
       local lspconfig = require("lspconfig")
+      local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
       -- Lua LSP
       lspconfig.lua_ls.setup {
+        capabilities = capabilities,
         settings = {
           Lua = {
             runtime = {
@@ -33,24 +37,18 @@ return {
         },
       }
 
-
       -- C/C++ LSP (clangd)
-      lspconfig.clangd.setup {}
+      lspconfig.clangd.setup { capabilities = capabilities }
 
       -- Go LSP (gopls)
-      lspconfig.gopls.setup {}
+      lspconfig.gopls.setup { capabilities = capabilities }
 
       -- Java LSP (jdtls)
-      lspconfig.jdtls.setup {}
+      lspconfig.jdtls.setup { capabilities = capabilities }
       -- Python LSP (pyright)
       lspconfig.pyright.setup {
-        -- settings = {
-        --   python = {
-        --     pythonPath = vim.fn.exepath('python3'),
-        --   }
-        -- },
+        capabilities = capabilities,
         on_attach = function(client, bufnr)
-          client.server_capabilities.documentFormattingProvider = true
           local opts = { buf = bufnr }
           vim.api.nvim_set_option_value('expandtab', true, opts) -- Use spaces instead of tabs
           vim.api.nvim_set_option_value('shiftwidth', 2, opts)   -- Number of spaces for indentation
@@ -58,30 +56,20 @@ return {
         end,
       }
 
-      -- lspconfig.pylsp.setup {}
+      lspconfig.bashls.setup { capabilities = capabilities }
+      lspconfig.jsonls.setup { capabilities = capabilities }
 
-      -- Bash LSP (bash-language-server)
-      lspconfig.bashls.setup {}
-
-      -- json and yaml
-      lspconfig.jsonls.setup {}
-      -- lspconfig.yamlls.setup {}
-
-      lspconfig.marksman.setup {
-        filetypes = { "makefile", "mkd" },
-      }
-      local tfcapabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+      lspconfig.marksman.setup { capabilities = capabilities }
       lspconfig.terraformls.setup {
         filetypes = { "terraform", "terraform-vars", "tf", "tfvars" },
-        capabilities = tfcapabilities,
+        capabilities = capabilities,
       }
 
-      lspconfig.gh_actions_ls.setup {}
-      lspconfig.gitlab_ci_ls.setup {}
-
-      lspconfig.gitlab_ci_ls.setup {}
+      lspconfig.gh_actions_ls.setup { capabilities = capabilities }
+      lspconfig.gitlab_ci_ls.setup { capabilities = capabilities }
 
       lspconfig.ts_ls.setup {
+        capabilities = capabilities,
         init_options = {
           plugins = {
             {
@@ -98,11 +86,10 @@ return {
         },
       }
 
-      lspconfig.dockerls.setup {}
+      lspconfig.dockerls.setup { capabilities = capabilities }
 
-      local latexcap = require('cmp_nvim_lsp').default_capabilities()
       lspconfig.texlab.setup {
-        capabilities = latexcap,
+        capabilities = capabilities,
         settings = {
           texlab = {
             latex = {
@@ -149,44 +136,28 @@ return {
           { name = "luasnip" },
           { name = "buffer" },
           { name = "path" },
-
         }),
       })
-    end,
-  },
-  { "folke/lsp-trouble.nvim" },
-  --[[
-  {
-    "jose-elias-alvarez/null-ls.nvim",
-    config = function()
-      local null_ls = require("null-ls")
 
-      null_ls.setup({
+      cmp.setup.cmdline('/', {
+        mapping = cmp.mapping.preset.cmdline(),
         sources = {
-          -- Formatters
-          null_ls.builtins.formatting.stylua, -- Lua formatter
-          null_ls.builtins.formatting.shfmt, -- Bash formatter
-          null_ls.builtins.formatting.black, -- Python formatter
-          null_ls.builtins.formatting.prettier, -- Javascript,Typescript,JSON,YAML etc.
-          null_ls.builtins.formatting.clang_format, -- C/C++ formatter
+          { name = 'buffer' }
+        }
+      })
 
-          -- Diagnostics (Linters)
-          null_ls.builtins.diagnostics.flake8, -- Python linter
-          null_ls.builtins.diagnostics.shellcheck, -- Bash linter
-          null_ls.builtins.diagnostics.eslint_d, -- Javascript,Typescript linter
-          null_ls.builtins.diagnostics.cppcheck, -- C/C++ linter
-
-          -- Completion
-          null_ls.builtins.completion.spell, -- Spell check completion.
-
-          -- Code Actions
-          null_ls.builtins.code_actions.gitsigns, -- Gitsigns code actions.
-        },
+      cmp.setup.cmdline(':', {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = cmp.config.sources({
+          { name = 'path' }
+        }, {
+          { name = 'cmdline' }
+        })
       })
     end,
-    dependencies = {
-        {"nvim-lua/plenary.nvim"}
-    }
   },
---]]
+  {
+    "folke/trouble.nvim",
+    opts = {},
+  },
 }
