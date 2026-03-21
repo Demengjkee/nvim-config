@@ -5,11 +5,11 @@ return {
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup()
-      local lspconfig = require("lspconfig")
       local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
       -- Lua LSP
-      lspconfig.lua_ls.setup {
+      vim.lsp.config("lua_ls", {
+        cmd = { 'lua-language-server' },
         capabilities = capabilities,
         settings = {
           Lua = {
@@ -35,18 +35,23 @@ return {
             },
           },
         },
-      }
+      })
+      vim.lsp.enable("lua_ls")
 
       -- C/C++ LSP (clangd)
-      lspconfig.clangd.setup { capabilities = capabilities }
+      vim.lsp.config("clangd", { capabilities = capabilities })
+      vim.lsp.enable("clangd")
 
       -- Go LSP (gopls)
-      lspconfig.gopls.setup { capabilities = capabilities }
+      vim.lsp.config("gopls", { capabilities = capabilities })
+      vim.lsp.enable("gopls")
 
       -- Java LSP (jdtls)
-      lspconfig.jdtls.setup { capabilities = capabilities }
+      vim.lsp.config("jdtls", { capabilities = capabilities })
+      vim.lsp.enable("jdtls")
+
       -- Python LSP (pyright)
-      lspconfig.pyright.setup {
+      vim.lsp.config("pyright", {
         capabilities = capabilities,
         on_attach = function(client, bufnr)
           local opts = { buf = bufnr }
@@ -54,21 +59,30 @@ return {
           vim.api.nvim_set_option_value('shiftwidth', 2, opts)   -- Number of spaces for indentation
           vim.api.nvim_set_option_value('tabstop', 2, opts)
         end,
-      }
+      })
+      vim.lsp.enable("pyright")
 
-      lspconfig.bashls.setup { capabilities = capabilities }
-      lspconfig.jsonls.setup { capabilities = capabilities }
+      vim.lsp.config("bashls", { capabilities = capabilities })
+      vim.lsp.enable("bashls")
 
-      lspconfig.marksman.setup { capabilities = capabilities }
-      lspconfig.terraformls.setup {
+      vim.lsp.config("jsonls", { capabilities = capabilities })
+      vim.lsp.enable("jsonls")
+
+      vim.lsp.config("marksman", { capabilities = capabilities })
+      vim.lsp.enable("marksman")
+
+      vim.lsp.config("terraformls", {
         filetypes = { "terraform", "terraform-vars", "tf", "tfvars" },
         capabilities = capabilities,
-      }
+      })
+      vim.lsp.enable("terraformls")
 
-      lspconfig.gh_actions_ls.setup { capabilities = capabilities }
-      lspconfig.gitlab_ci_ls.setup { capabilities = capabilities }
+      vim.lsp.config("gh_actions_ls", { capabilities = capabilities })
+      vim.lsp.enable("gh_actions_ls")
+      vim.lsp.config("gitlab_ci_ls", { capabilities = capabilities })
+      vim.lsp.enable("gitlab_ci_ls")
 
-      lspconfig.ts_ls.setup {
+      vim.lsp.config("ts_ls", {
         capabilities = capabilities,
         init_options = {
           plugins = {
@@ -84,11 +98,13 @@ return {
           "typescript",
           "vue",
         },
-      }
+      })
+      vim.lsp.enable("ts_ls")
 
-      lspconfig.dockerls.setup { capabilities = capabilities }
+      vim.lsp.config("dockerls", { capabilities = capabilities })
+      vim.lsp.enable("dockerls")
 
-      lspconfig.texlab.setup {
+      vim.lsp.config("texlab", {
         capabilities = capabilities,
         settings = {
           texlab = {
@@ -97,7 +113,8 @@ return {
             }
           }
         }
-      }
+      })
+      vim.lsp.enable("texlab")
     end,
     dependencies = {
       { "williamboman/mason.nvim" },
